@@ -34,7 +34,7 @@ def predict(brewery_name: str, rev_aroma: float, rev_taste: float, rev_appearanc
     features = format_features(brewery_name, rev_aroma, rev_taste, rev_appearance, rev_palate)
     obs = pd.DataFrame(features)
     pred = beer_style_decode.inverse_transform(rfc_pipeline.predict(obs))
-    return JSONResponse(pred.tolist())
+    return JSONResponse(pred.to_json())
 
 @app.get("/beer/stylespred")
 def predict(brewery_name: str, rev_aroma: float, rev_taste: float, rev_appearance: float, rev_palate: float):
@@ -47,5 +47,5 @@ def predict(brewery_name: str, rev_aroma: float, rev_taste: float, rev_appearanc
     features = format_features(brewery_name, rev_aroma, rev_taste, rev_appearance, rev_palate)
     obs = pd.DataFrame(features)
     pred = beer_style_decode.inverse_transform(rfc_pipeline.predict(obs))
-    return JSONResponse(pred.tolist())
+    return JSONResponse(pred)
 
