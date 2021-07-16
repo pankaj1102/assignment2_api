@@ -5,7 +5,6 @@ import pandas as pd
 
 app = FastAPI()
 
-rfc_pipeline = load("pipeline_model_rfc.joblib")
 
 @app.get("/")
 def read_root():
@@ -27,7 +26,11 @@ def format_features(brewery_name: str, rev_aroma: float, rev_taste: float, rev_a
 @app.get("/beer/predictstyle")
 def predict(brewery_name: str, rev_aroma: float, rev_taste: float, rev_appearance: float, rev_palate: float):
     from feature_encode import BeerStyleCode
+    from joblib import load
+    
+    rfc_pipeline = load("../models/pipeline_model_rfc.joblib")
     beer_style_decode = BeerStyleCode()
+    
     features = format_features(brewery_name, rev_aroma, rev_taste, rev_appearance, rev_palate)
     obs = pd.DataFrame(features)
     pred = beer_style_decode.inverse_transform(rfc_pipeline.predict(obs))
@@ -35,8 +38,14 @@ def predict(brewery_name: str, rev_aroma: float, rev_taste: float, rev_appearanc
 
 @app.get("/beer/stylespred")
 def predict(brewery_name: str, rev_aroma: float, rev_taste: float, rev_appearance: float, rev_palate: float):
+    from feature_encode import BeerStyleCode
+    from joblib import load
+    
+    rfc_pipeline = load("../models/pipeline_model_rfc.joblib")
+    beer_style_decode = BeerStyleCode()
+    
     features = format_features(brewery_name, rev_aroma, rev_taste, rev_appearance, rev_palate)
     obs = pd.DataFrame(features)
-    pred = rfc_pipeline.predict(obs)
+    pred = beer_style_decode.inverse_transform(rfc_pipeline.predict(obs))
     return JSONResponse(pred.tolist())
 
